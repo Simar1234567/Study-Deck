@@ -25,3 +25,15 @@ Run `node --test tests/smart-review.test.cjs` for deterministic scheduling tests
 ## Shuffle
 
 Use **Shuffle remaining** during typed or flip practice to randomize upcoming cards. The current card, unsaved answers, grades, and saved schedules stay intact. The button becomes available when at least two cards remain after the current card. Shuffling replaces the current queue priority order; starting a new Smart review session restores automatic prioritization.
+
+## Updates from inside the app
+
+Use **Check for updates** to check this repository’s `main` branch over HTTPS. The app verifies the downloaded version, byte count, app identity, and SHA-256 hash before offering installation. There is no background network access or automatic installation. An offline/error/cancelled check leaves the app untouched.
+
+Chrome/Edge on desktop may offer **Select file & install update**. Select the existing local Study Deck HTML and grant permission to edit it. The browser stages the replacement and commits it on completion. Then reopen the selected file. Browsers without the File System Access API offer **Download updated HTML**; replace the old copy manually, using the same folder and filename. Browser security prevents silently writing arbitrary files. This updates a local copy, not GitHub or an installed app on another device.
+
+Export your decks before updating. Updates retain the browser storage keys and do not clear study data, but browser storage remains specific to a browser/origin and is not a substitute for a backup. Source-code edits in the selected HTML will be replaced by the GitHub version. Keep the same local filename/location; browsers vary in how they retain storage for local files.
+
+### Publishing later updates
+
+After editing the HTML, run `node scripts/prepare-update.cjs 1.1.1` (choose a strictly higher version each release). This sets both version markers and generates `update-manifest.json`. Commit and push the HTML and manifest together. Run `node scripts/prepare-update.cjs --check` to verify they match. GitHub CDN propagation may briefly cause verification errors; retry later rather than bypassing verification. Never publish a changed HTML under the same version if installed users should receive it.

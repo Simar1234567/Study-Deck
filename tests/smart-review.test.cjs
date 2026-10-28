@@ -61,3 +61,21 @@ test('shuffle preserves the current card, feedback, draft DOM and queue membersh
  assert.equal(run('session.queue.join()'),'a,b');
  run('session=null;shuffleSession()');
 });
+
+test('updater compares numeric release versions and rejects malformed versions',()=>{
+ const run=setup();
+ assert.equal(run("compareVersions('1.10.0','1.9.0')"),1);
+ assert.equal(run("compareVersions('1.1.0','1.1.0')"),0);
+ assert.equal(run("compareVersions('1.0.9','1.1.0')"),-1);
+ assert.throws(()=>run("compareVersions('not a version','1.1.0')"));
+});
+test('published update manifest matches the exact HTML bytes and runtime version',()=>{
+ const crypto=require('node:crypto');
+ const bytes=fs.readFileSync(path.join(__dirname,'../BIO201_Appendicular_Ready_To_Study.html'));
+ const manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../update-manifest.json'),'utf8'));
+ const html=bytes.toString('utf8');
+ assert.equal(manifest.bytes,bytes.length);
+ assert.equal(manifest.sha256,crypto.createHash('sha256').update(bytes).digest('hex'));
+ assert.equal(manifest.version,html.match(/const APP_VERSION='([^']+)'/)[1]);
+ assert.equal(manifest.version,html.match(/name="study-deck-version" content="([^"]+)"/)[1]);
+});
