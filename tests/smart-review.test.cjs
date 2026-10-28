@@ -48,3 +48,16 @@ test('priority, new-card interleaving, session cap and bounded spaced retries',(
  run("session={queue:[],retries:{}};enqueueRetry(c,{state:'needs_review',due:t+DAY})");
  assert.equal(run('session.queue.length'),0);
 });
+
+test('shuffle preserves the current card, feedback, draft DOM and queue membership',()=>{
+ const run=setup();
+ run("showToast=()=>{};renderStudy=()=>{throw Error('Must not discard the answer form')};Math.random=()=>0;session={queue:['a','b','c','d'],shown:true,retries:{b:1}};feedback={correct:false}");
+ run('shuffleSession()');
+ assert.equal(run('session.queue[0]'),'a');
+ assert.equal(run('session.queue.slice().sort().join()'),'a,b,c,d');
+ assert.notEqual(run('session.queue.join()'),'a,b,c,d');
+ assert.ok(run('feedback.correct===false&&session.shown&&session.retries.b===1'));
+ run("session.queue=['a','b'];shuffleSession()");
+ assert.equal(run('session.queue.join()'),'a,b');
+ run('session=null;shuffleSession()');
+});

@@ -21,3 +21,7 @@ Existing Known/Review progress displays as Well known/Needs review without inven
 ## Validation
 
 Run `node --test tests/smart-review.test.cjs` for deterministic scheduling tests without additional packages. Browser smoke checks should cover typed answers and Enter submission, partial credit, field overrides, answer-side flipping, repeated cards, self-rating, reload persistence, deck deletion, backup/import, and narrow-screen layouts.
+
+## Shuffle
+
+Use **Shuffle remaining** during typed or flip practice to randomize upcoming cards. The current card, unsaved answers, grades, and saved schedules stay intact. The button becomes available when at least two cards remain after the current card. Shuffling replaces the current queue priority order; starting a new Smart review session restores automatic prioritization.
