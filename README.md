@@ -14,7 +14,7 @@ Each field is scored separately. Name-only practice cannot earn credit for untes
 
 The offline scheduler uses SM-2-inspired intervals, not Anki's FSRS model or a claim of identical scheduling. Smart sessions contain up to 20 cards, interleaving three due reviews with one new card when both are available. Weakness, relative overdue time, and past misses determine review priority.
 
-Initial intervals are 10 minutes / 1 day / 3 days / 7 days from Needs review through Perfect. Spaced successes grow intervals up to 180 days; any missed field limits the next interval to at most one day. Weak or missed cards get up to two retries after up to three other cards. If no other cards remain, or retries are exhausted, they become due within 10 minutes. Immediate repetitions cannot multiply intervals or earn spaced mastery. **Practice all** permits early review; **Due reviews only** excludes new and future-due cards.
+Initial intervals are 10 minutes / 1 day / 3 days / 7 days from Needs review through Perfect. Spaced successes grow intervals up to your per-deck maximum (30 days by default); any missed field limits the next interval to at most one day. Weak or missed cards get up to two retries after up to three other cards. If no other cards remain, or retries are exhausted, they become due within 10 minutes. Immediate repetitions cannot multiply intervals or earn spaced mastery. **Practice all** permits early review; **Due reviews only** excludes new and future-due cards.
 
 Existing Known/Review progress displays as Well known/Needs review without inventing historical field scores. No storage keys or original card IDs change. JSON export/import retains field results and schedules. Export a backup before switching devices or replacing an offline copy: GitHub and this HTML do not synchronize browser progress.
 
@@ -28,7 +28,7 @@ Use **Shuffle remaining** during typed or flip practice to randomize upcoming ca
 
 ## Updates from inside the app
 
-Use **Check for updates** to check this repository’s `main` branch over HTTPS. The app verifies the downloaded version, byte count, app identity, and SHA-256 hash before offering installation. There is no background network access or automatic installation. An offline/error/cancelled check leaves the app untouched.
+Use **Check for updates** to check the matching edition over HTTPS: desktop checks `main`; iPad checks `ipad-compatible`. The app verifies the downloaded version, byte count, app identity, and SHA-256 hash before offering installation. There is no background network access or automatic installation. An offline/error/cancelled check leaves the app untouched.
 
 Chrome/Edge on desktop may offer **Select file & install update**. Select the existing local Study Deck HTML and grant permission to edit it. The browser stages the replacement and commits it on completion. Then reopen the selected file. Browsers without the File System Access API offer **Download updated HTML**; replace the old copy manually, using the same folder and filename. Browser security prevents silently writing arbitrary files. This updates a local copy, not GitHub or an installed app on another device.
 
@@ -36,8 +36,20 @@ Export your decks before updating. Updates retain the browser storage keys and d
 
 ### Publishing later updates
 
-After editing the HTML, run `node scripts/prepare-update.cjs 1.1.1` (choose a strictly higher version each release). This sets both version markers and generates `update-manifest.json`. Commit and push the HTML and manifest together. Run `node scripts/prepare-update.cjs --check` to verify they match. GitHub CDN propagation may briefly cause verification errors; retry later rather than bypassing verification. Never publish a changed HTML under the same version if installed users should receive it.
+After editing the HTML, run `node scripts/prepare-update.cjs 1.2.0` (choose a strictly higher version each release). This updates the shared source version, generates the iPad `index.html` with its Safari/touch styles, and generates both edition-specific manifests. Commit all generated files together and publish to both `main` and `ipad-compatible`, preserving any new remote changes. Run `node scripts/prepare-update.cjs --check` to verify they match. GitHub CDN propagation may briefly cause verification errors; retry later rather than bypassing verification. Never publish a changed HTML under the same version if installed users should receive it.
 
 ## Quick editing while studying
 
 After checking typed answers or revealing a flip card, use the top-right **⋯ → Edit card** menu. Saving returns to the same study card and rechecks the current typed answers against your edits; the review is recorded when you continue. Cancel keeps the current feedback and queue. Editing a card does not reset its past review history. Card changes save to this browser and are included in deck backups.
+
+## Desktop and iPad editions
+
+All requested features are maintained in both editions. Desktop opens `BIO201_Appendicular_Ready_To_Study.html`; iPad opens `index.html` from the `ipad-compatible` branch. Both include deck deletion, partial-credit categories, smart review, shuffle, quick editing, backup/import, and update checks. The iPad edition keeps the existing Safari layout and touch-target fixes. Safari cannot directly overwrite a local HTML; its update flow downloads the new iPad edition for manual replacement.
+
+`BIO201_Appendicular_Ready_To_Study.html` is the shared source; `styles/ipad.css` contains the preserved iPad overrides. The release script regenerates `index.html`, so app logic cannot silently diverge. The two editions keep the same storage keys, but progress remains browser/origin-local; it does not synchronize between devices.
+
+## Custom review interval
+
+Open a deck → **Edit deck** → **Maximum days between reviews**. Choose a whole number from 1 to 365; the default is now 30 instead of 180. This is a maximum gap between reviews, not the number of days needed to learn a deck. Typed reviews and flip-card ratings both respect it. Weak cards may return much sooner.
+
+Reducing the limit shortens existing due dates relative to their last review; cards past that limit become due immediately. Increasing it never postpones an already-scheduled review. Categories and answer history are retained. Settings are saved per deck and included in backups/imports.

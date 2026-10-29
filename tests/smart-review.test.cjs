@@ -79,3 +79,40 @@ test('published update manifest matches the exact HTML bytes and runtime version
  assert.equal(manifest.version,html.match(/const APP_VERSION='([^']+)'/)[1]);
  assert.equal(manifest.version,html.match(/name="study-deck-version" content="([^"]+)"/)[1]);
 });
+
+test('custom maximum applies to review scheduling and rejects invalid settings',()=>{
+ const run=setup();
+ assert.equal(run('maxIntervalDays(d)'),30);
+ for(const days of [0,-1,1.5,366,NaN])assert.throws(()=>run(`applyReviewLimit(d,${days})`));
+ run('applyReviewLimit(d,1)');
+ run('recordReview(d,c,fields(4),t);recordReview(d,c,fields(4),t+2*DAY)');
+ assert.equal(run('d.progress.x.state'),'perfect');
+ assert.equal(run('d.progress.x.intervalMs'),86400000);
+ assert.equal(run('d.progress.x.due'),1800000000000+3*86400000);
+});
+test('shorter limits affect existing due dates without resetting results or postponing on increase',()=>{
+ const run=setup();
+ run("d.progress.x={state:'perfect',last:t,due:t+180*DAY,intervalMs:180*DAY,attempts:12};applyReviewLimit(d,2)");
+ assert.equal(run('d.progress.x.due'),1800000000000+2*86400000);
+ assert.ok(run('isDue(d,c,t+3*DAY)'));
+ assert.equal(run('d.progress.x.attempts'),12);
+ run('applyReviewLimit(d,60)');
+ assert.equal(run('d.progress.x.due'),1800000000000+2*86400000);
+ // Old records without explicit settings already use the default 30-day cap.
+ run("delete d.reviewSettings;d.progress.x.due=t+180*DAY;applyReviewLimit(d,90)");
+ assert.equal(run('d.progress.x.due'),1800000000000+30*86400000);
+ run("globalThis.crypto={randomUUID:()=>String(Math.random())};const copy=importDeckObject({cards:[c],progress:d.progress,reviewSettings:d.reviewSettings})[0]");
+ assert.equal(run('maxIntervalDays(copy)'),90);
+ assert.ok(run('Object.values(copy.progress)[0].due===d.progress.x.due'));
+});
+test('iPad artifact and manifest are reproducible with the correct update channel',()=>{
+ const {execFileSync}=require('node:child_process');
+ execFileSync(process.execPath,[path.join(__dirname,'../scripts/prepare-update.cjs'),'--check']);
+ const ipad=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+ assert.match(ipad,/const APP_EDITION='ipad'/);
+ assert.match(ipad,/const UPDATE_FILE='index.html'/);
+ assert.match(ipad,/const UPDATE_MANIFEST='ipad-update-manifest.json'/);
+ assert.match(ipad,/Study-Deck\/ipad-compatible\//);
+ assert.match(ipad,/viewport-fit=cover/);
+ assert.match(ipad,/iPad compatibility layer/);
+});
