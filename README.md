@@ -65,3 +65,11 @@ These immediate drills do not alter the queue, category, attempt history, or rev
 ## Multiple lines on cards
 
 All answer fields support multiple lines, including the main answer. On-card text areas grow as you type, and answer views preserve line breaks and blank lines. Enter adds a new line while typing; use **Check answers** or **Ctrl/⌘+Enter** to grade. After grading, Enter continues as before. Saved card text, backups, and imported cards retain their internal line breaks.
+
+## Reset and resume progress
+
+**Reset progress** is available on each deck tile and at the top of the deck page. After confirmation, it clears that deck’s categories, answer history, review dates, and saved study session. Cards, photos, edits, layouts, and the maximum review interval are retained. Other decks are unaffected. Export a backup first if you may want the old results back.
+
+**Resume study** appears on the deck tile and deck page when an unfinished session is saved. Study position is saved automatically while typing and whenever the study view changes. Resume restores the current card, remaining queue (including shuffled order), scope, typed draft, answer-side feedback, and practice-retry state without recording another review. **Pause study** returns to the deck page and keeps that position. Starting a new session for the same deck replaces its previous saved session; finishing or resetting clears it.
+
+Session snapshots use a small separate IndexedDB database plus a localStorage fallback, preserving the existing deck/progress storage keys. Resume points are also included in exports, with card IDs remapped on import. Use the same browser/profile and file location after app updates. This does not synchronize study positions across devices. Unsaved changes in the card editor are not restored—use **Save card** before leaving those edits.

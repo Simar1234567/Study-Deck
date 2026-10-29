@@ -7,7 +7,7 @@ const path=require('node:path');
 function setup(){
  const html=fs.readFileSync(path.join(__dirname,'../BIO201_Appendicular_Ready_To_Study.html'),'utf8');
  const script=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n').replace(/init\(\);\s*$/,'');
- const ctx=vm.createContext({console,document:{addEventListener(){}}});
+ const ctx=vm.createContext({console,window:{addEventListener(){}},document:{addEventListener(){}}});
  vm.runInContext(script,ctx);
  vm.runInContext(`const c={id:'x',name:'A',action:'B',origin:'C',insertion:'D'};const d={cards:[c],progress:{}};const t=1800000000000;const fields=n=>fieldKeys(c).map((key,i)=>({key,correct:i<n}));`,ctx);
  return code=>vm.runInContext(code,ctx);
@@ -167,4 +167,31 @@ test('card layout sanitizes imported settings and preserves field order in backu
  assert.equal(run('importedLayout.photoWidth'),65);
  run("d.labels={};quizScope='all'");
  assert.equal(run('userFields(c,d).map(f=>f[0]).join()'),'origin,name,action,insertion');
+});
+
+test('resume restores drafts, feedback and queue without creating review attempts',()=>{
+ const run=setup();
+ run("d.id='deck';d.labels={};decks=[d];activeDeckId=d.id;session={kind:'all',queue:['x'],shown:false,completed:3,correct:1,missed:2,retries:{x:1},drafts:{name:'Line one\\nLine two'}};feedback={correct:false,fields:[{key:'name',expected:'A',entered:'Wrong',correct:false}]};quizScope='name';const snapshot=makeStudyBookmark(d);const restored=restoredStudyState(d,snapshot)");
+ assert.equal(run('restored.session.queue.join()'),'x');
+ assert.equal(run('restored.session.drafts.name'),'Line one\nLine two');
+ assert.equal(run('restored.feedback.fields[0].entered'),'Wrong');
+ assert.equal(run('restored.scope'),'name');
+ assert.equal(run('restored.session.completed'),3);
+ assert.equal(run('Object.keys(d.progress).length'),0);
+});
+test('resume filters removed cards and does not apply another card’s draft or feedback',()=>{
+ const run=setup();
+ run("d.id='deck';d.labels={};const snapshot={schema:1,deckId:d.id,session:{kind:'all',queue:['deleted','x'],drafts:{name:'old answer'},shown:true,feedback:{fields:[{key:'name',expected:'A',entered:'old answer',correct:true}]}}};const restored=restoredStudyState(d,snapshot)");
+ assert.equal(run('restored.session.queue.join()'),'x');
+ assert.equal(run('restored.feedback'),null);
+ assert.equal(run('Object.keys(restored.session.drafts).length'),0);
+ assert.equal(run('restored.session.shown'),false);
+});
+test('cleared bookmark wins over older saved sessions and imports remap card IDs',()=>{
+ const run=setup();
+ run("d.id='deck';d.labels={};d.studySession={schema:1,deckId:d.id,savedAt:1,session:{kind:'all',queue:['x'],retries:{x:1},scope:'all'}};studyBookmarks.set(d.id,{schema:1,deckId:d.id,savedAt:2,session:null})");
+ assert.equal(run('hasStudyBookmark(d)'),false);
+ run("globalThis.crypto={randomUUID:()=>String(Math.random())};const imported=importDeckObject(d)[0];const restored=restoredStudyState(imported,imported.studySession)");
+ assert.ok(run('restored.session.queue[0]===imported.cards[0].id'));
+ assert.equal(run('restored.session.retries[imported.cards[0].id]'),1);
 });
