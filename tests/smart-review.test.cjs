@@ -116,3 +116,55 @@ test('iPad artifact and manifest are reproducible with the correct update channe
  assert.match(ipad,/viewport-fit=cover/);
  assert.match(ipad,/iPad compatibility layer/);
 });
+
+test('immediate practice preserves the original result and records only one real review',async()=>{
+ const run=setup();
+ run("d.id='deck';decks=[d];activeDeckId=d.id;renderStudy=()=>{};persist=async()=>{};session={kind:'all',queue:['x','later'],completed:0,correct:0,missed:0,retries:{},shown:false};feedback={correct:false,fields:fieldKeys(c).map(key=>({key,label:key,expected:c[key],entered:'wrong',correct:false}))};const original=JSON.stringify(feedback);const originalQueue=session.queue.join()");
+ run('practiceThisCard()');
+ assert.equal(run('feedback'),null);
+ assert.equal(run('session.queue.join()'),run('originalQueue'));
+ run('feedback={correct:true,fields:fields(4)};practiceThisCard();feedback={correct:true,fields:fields(4)}');
+ await run('finishAnswer()');
+ assert.equal(run('JSON.stringify(feedback)'),run('original'));
+ assert.equal(run('session.completed'),0);
+ assert.equal(run('Object.keys(d.progress).length'),0);
+ await run('finishAnswer()');
+ assert.equal(run('d.progress.x.attempts'),1);
+ assert.equal(run('d.progress.x.state'),'needs_review');
+ assert.equal(run('session.completed'),1);
+});
+test('flip practice restores the answer side, scope and queue without assigning a rating',()=>{
+ const run=setup();
+ run("d.id='deck';decks=[d];activeDeckId=d.id;renderStudy=()=>{};session={kind:'flip',queue:['x'],shown:true};quizScope='name';feedback=null;practiceThisCard()");
+ assert.equal(run('session.kind'),'practice');
+ assert.equal(run('quizScope'),'all');
+ assert.equal(run('session.shown'),false);
+ run('endCardPractice()');
+ assert.equal(run('session.kind'),'flip');
+ assert.equal(run('quizScope'),'name');
+ assert.equal(run('session.shown'),true);
+ assert.equal(run('session.queue.join()'),'x');
+ assert.equal(run('Object.keys(d.progress).length'),0);
+});
+test('returning from practice rechecks a corrected answer but retains untouched manual grades',()=>{
+ const run=setup();
+ run("d.id='deck';d.labels={name:'Name'};decks=[d];activeDeckId=d.id;renderStudy=()=>{};session={kind:'all',queue:['x'],shown:false};quizScope='name';feedback={correct:true,fields:[{key:'name',label:'Name',expected:'A',entered:'accepted wording',correct:true}]};practiceThisCard();endCardPractice()");
+ assert.equal(run('feedback.correct'),true);
+ run("practiceThisCard();c.name='Corrected';endCardPractice()");
+ assert.equal(run('feedback.fields[0].expected'),'Corrected');
+ assert.equal(run('feedback.fields[0].entered'),'accepted wording');
+ assert.equal(run('feedback.correct'),false);
+});
+
+test('card layout sanitizes imported settings and preserves field order in backups',()=>{
+ const run=setup();
+ run("c.layout={fieldOrder:['origin','bad','origin','name'],photoWidth:1000,stacked:true};const layout=cardLayout(c)");
+ assert.equal(run('layout.fieldOrder.join()'),'origin,name,action,insertion');
+ assert.equal(run('layout.photoWidth'),65);
+ assert.ok(run('layout.stacked'));
+ run("globalThis.crypto={randomUUID:()=>String(Math.random())};const importedLayout=importDeckObject({cards:[c]})[0].cards[0].layout");
+ assert.equal(run('importedLayout.fieldOrder.join()'),'origin,name,action,insertion');
+ assert.equal(run('importedLayout.photoWidth'),65);
+ run("d.labels={};quizScope='all'");
+ assert.equal(run('userFields(c,d).map(f=>f[0]).join()'),'origin,name,action,insertion');
+});

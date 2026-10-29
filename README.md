@@ -40,7 +40,9 @@ After editing the HTML, run `node scripts/prepare-update.cjs 1.2.0` (choose a st
 
 ## Quick editing while studying
 
-After checking typed answers or revealing a flip card, use the top-right **⋯ → Edit card** menu. Saving returns to the same study card and rechecks the current typed answers against your edits; the review is recorded when you continue. Cancel keeps the current feedback and queue. Editing a card does not reset its past review history. Card changes save to this browser and are included in deck backups.
+After checking typed answers or revealing a flip card, use **⋯ → Edit card**. Study-time editing happens directly on the card: tap the text to change it, move answer fields with ↑ / ↓, adjust the photo width or stack it above the answers, and change/remove the photo. Use **Save card** or **Cancel** at the top. The normal deck-manager editor remains available outside study sessions.
+
+Saving keeps you on the same study card, updates the answer view, and rechecks changed answers against your typed response. Enter adds a line while editing; Escape cancels. Card content and layout are saved with browser-local decks and exported backups. Editing does not reset past review history. The dropdown closes when the mouse/pen leaves it, focus leaves it, or you tap outside; touch users can open it by tapping the three dots.
 
 ## Desktop and iPad editions
 
@@ -53,3 +55,9 @@ All requested features are maintained in both editions. Desktop opens `BIO201_Ap
 Open a deck → **Edit deck** → **Maximum days between reviews**. Choose a whole number from 1 to 365; the default is now 30 instead of 180. This is a maximum gap between reviews, not the number of days needed to learn a deck. Typed reviews and flip-card ratings both respect it. Weak cards may return much sooner.
 
 Reducing the limit shortens existing due dates relative to their last review; cards past that limit become due immediately. Increasing it never postpones an already-scheduled review. Categories and answer history are retained. Settings are saved per deck and included in backups/imports.
+
+## Practice the same card after seeing its answer
+
+After checking typed answers or revealing a flip card, choose **Practice this card**. This hides the answers and opens blank fields on the same card. Check your practice answers and choose **Practice again** to repeat, or **Return to original result** to continue the study session. Flip-card practice returns to its original answer side for self-rating.
+
+These immediate drills do not alter the queue, category, attempt history, or review date. Your original result is retained and recorded only when you continue normally; practice does not turn a missed review into an earned spaced success. If you correct the card's answer through Quick edit during practice, the original typed response is rechecked against the corrected answer when you return.
