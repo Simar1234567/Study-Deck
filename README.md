@@ -37,3 +37,7 @@ Export your decks before updating. Updates retain the browser storage keys and d
 ### Publishing later updates
 
 After editing the HTML, run `node scripts/prepare-update.cjs 1.1.1` (choose a strictly higher version each release). This sets both version markers and generates `update-manifest.json`. Commit and push the HTML and manifest together. Run `node scripts/prepare-update.cjs --check` to verify they match. GitHub CDN propagation may briefly cause verification errors; retry later rather than bypassing verification. Never publish a changed HTML under the same version if installed users should receive it.
+
+## Quick editing while studying
+
+After checking typed answers or revealing a flip card, use the top-right **⋯ → Edit card** menu. Saving returns to the same study card and rechecks the current typed answers against your edits; the review is recorded when you continue. Cancel keeps the current feedback and queue. Editing a card does not reset its past review history. Card changes save to this browser and are included in deck backups.
