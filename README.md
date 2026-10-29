@@ -61,3 +61,7 @@ Reducing the limit shortens existing due dates relative to their last review; ca
 After checking typed answers or revealing a flip card, choose **Practice this card**. This hides the answers and opens blank fields on the same card. Check your practice answers and choose **Practice again** to repeat, or **Return to original result** to continue the study session. Flip-card practice returns to its original answer side for self-rating.
 
 These immediate drills do not alter the queue, category, attempt history, or review date. Your original result is retained and recorded only when you continue normally; practice does not turn a missed review into an earned spaced success. If you correct the card's answer through Quick edit during practice, the original typed response is rechecked against the corrected answer when you return.
+
+## Multiple lines on cards
+
+All answer fields support multiple lines, including the main answer. On-card text areas grow as you type, and answer views preserve line breaks and blank lines. Enter adds a new line while typing; use **Check answers** or **Ctrl/⌘+Enter** to grade. After grading, Enter continues as before. Saved card text, backups, and imported cards retain their internal line breaks.
