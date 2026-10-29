@@ -73,3 +73,7 @@ All answer fields support multiple lines, including the main answer. On-card tex
 **Resume study** appears on the deck tile and deck page when an unfinished session is saved. Study position is saved automatically while typing and whenever the study view changes. Resume restores the current card, remaining queue (including shuffled order), scope, typed draft, answer-side feedback, and practice-retry state without recording another review. **Pause study** returns to the deck page and keeps that position. Starting a new session for the same deck replaces its previous saved session; finishing or resetting clears it.
 
 Session snapshots use a small separate IndexedDB database plus a localStorage fallback, preserving the existing deck/progress storage keys. Resume points are also included in exports, with card IDs remapped on import. Use the same browser/profile and file location after app updates. This does not synchronize study positions across devices. Unsaved changes in the card editor are not restored—use **Save card** before leaving those edits.
+
+## Preview cards from the deck overview
+
+Click or tap a card row, photo, or name to view its photo, answers, note, source, and review status without starting a session or changing progress. Card names are keyboard-accessible buttons. Close the preview to return to the deck, or choose Edit card.
