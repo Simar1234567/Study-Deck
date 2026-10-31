@@ -12,19 +12,16 @@ function setup(){
  vm.runInContext(`const c={id:'x',name:'A',action:'B',origin:'C',insertion:'D'};const d={cards:[c],progress:{}};const t=1800000000000;const fields=n=>fieldKeys(c).map((key,i)=>({key,correct:i<n}));`,ctx);
  return code=>vm.runInContext(code,ctx);
 }
-test('partial scores, missed fields, spaced mastery and early practice',()=>{
+test('partial scores and perfect mastery require no waiting or scheduled dates',()=>{
  const run=setup();
- assert.equal(run('recordReview(d,c,fields(1),t).state'),'partially_known');
- assert.equal(run('recordReview(d,c,fields(3),t+1000).state'),'well_known');
- assert.ok(run('d.progress.x.intervalMs<=DAY'));
- assert.equal(run('recordReview(d,c,fields(0),t+2000).state'),'needs_review');
- assert.equal(run('recordReview(d,c,fields(4),t+3000).state'),'well_known');
- assert.equal(run('recordReview(d,c,fields(4),t+4000).state'),'well_known');
- assert.equal(run('recordReview(d,c,fields(4),t+DAY+4000).state'),'perfect');
- assert.equal(run("smartPool(d,'learn',t+DAY+4000).length"),0);
- assert.equal(run("smartPool(d,'all',t).length"),1);
- run('const before=d.progress.x.intervalMs;recordReview(d,c,fields(4),t+DAY+5000)');
- assert.ok(run('d.progress.x.intervalMs<=before'));
+ for(const [n,state] of [[1,'partially_known'],[3,'well_known'],[0,'needs_review'],[4,'perfect']])assert.equal(run(`recordReview(d,c,fields(${n}),t).state`),state);
+ assert.equal(run('d.progress.x.due'),undefined);
+ assert.equal(run('d.progress.x.intervalMs'),undefined);
+ assert.equal(run("smartPool(d,'learn',t).length"),1);
+ run('d.progress.x.due=t+365*DAY');
+ assert.equal(run("smartPool(d,'learn',t).length"),1);
+ assert.equal(run("smartPool(d,'review',t).length"),0);
+ assert.equal(run('dueLabel(d,c)'), 'Ready to study');
 });
 test('scope cannot earn untested credit; legacy states and new backups survive',()=>{
  const run=setup();
@@ -35,10 +32,11 @@ test('scope cannot earn untested credit; legacy states and new backups survive',
  run("globalThis.crypto={randomUUID:()=>String(Math.random())};const imported=importDeckObject({cards:[c],progress:d.progress})[0]");
  assert.ok(run('Object.values(imported.progress)[0].due===d.progress.x.due'));
 });
-test('priority, new-card interleaving, session cap and bounded spaced retries',()=>{
+test('priority, full-deck interleaving and bounded retries',()=>{
  const run=setup();
  run("const many={cards:Array.from({length:40},(_,i)=>({id:String(i),name:'N'})),progress:{}};for(let i=0;i<20;i++)many.progress[String(i)]={state:'needs_review',due:t-1000};const pool=smartPool(many,'learn',t)");
- assert.equal(run('pool.length'),20);
+ assert.equal(run('pool.length'),40);
+ assert.equal(run('new Set(pool.map(c=>c.id)).size'),40);
  assert.ok(run('pool.slice(0,3).every(c=>many.progress[c.id])'));
  assert.ok(run('!many.progress[pool[3].id]'));
  run("session={queue:['a','b','c','d'],retries:{}};enqueueRetry(c,{state:'needs_review',due:t+DAY})");
@@ -80,16 +78,6 @@ test('published update manifest matches the exact HTML bytes and runtime version
  assert.equal(manifest.version,html.match(/name="study-deck-version" content="([^"]+)"/)[1]);
 });
 
-test('custom maximum applies to review scheduling and rejects invalid settings',()=>{
- const run=setup();
- assert.equal(run('maxIntervalDays(d)'),30);
- for(const days of [0,-1,1.5,366,NaN])assert.throws(()=>run(`applyReviewLimit(d,${days})`));
- run('applyReviewLimit(d,1)');
- run('recordReview(d,c,fields(4),t);recordReview(d,c,fields(4),t+2*DAY)');
- assert.equal(run('d.progress.x.state'),'perfect');
- assert.equal(run('d.progress.x.intervalMs'),86400000);
- assert.equal(run('d.progress.x.due'),1800000000000+3*86400000);
-});
 test('shorter limits affect existing due dates without resetting results or postponing on increase',()=>{
  const run=setup();
  run("d.progress.x={state:'perfect',last:t,due:t+180*DAY,intervalMs:180*DAY,attempts:12};applyReviewLimit(d,2)");
