@@ -197,3 +197,16 @@ test('FSRS state survives JSON reload, predicts forgetting and never gates the w
  run("globalThis.crypto={randomUUID:()=>String(Math.random())};const copy=importDeckObject({cards:[c],progress:d.progress})[0]");
  assert.equal(run('Object.values(copy.progress)[0].fsrs.reps'),2);
 });
+test('answer parts support reorder, partial credit, labels, overrides and resume',()=>{
+ const run=setup();
+ assert.equal(run("answerParts('A; B\\n\\n C, D;').length"),3);
+ run("const g=gradeField('origin','Origin','Long head: scapula; Lateral head: humerus; Medial head: shaft','Lateral head: humerus\\nLong head: scapula')");
+ assert.equal(run('g.parts.filter(p=>p.correct).length'),2);
+ assert.equal(run("gradeField('origin','O','Long head: scapula; Medial head: humerus','Long head: humerus; Medial head: scapula').parts.filter(p=>p.correct).length"),0);
+ assert.equal(run("gradeField('origin','O','A; A','A').parts.filter(p=>p.correct).length"),1);
+ run("c.name='A; B; C';c.action='';c.origin='';c.insertion='';const partial=gradeField('name','Name',c.name,'C; A');recordReview(d,c,[partial],t)");
+ assert.equal(run('d.progress.x.score'),2/3);
+ assert.equal(run('d.progress.x.state'),'partially_known');
+ run("partial.parts[1].correct=true;partial.correct=true;d.labels={name:'Name'};const restored=restoreFeedback(JSON.parse(JSON.stringify({fields:[partial]})),c,d,'all')");
+ assert.equal(run('restored.fields[0].parts[1].correct'),true);
+});

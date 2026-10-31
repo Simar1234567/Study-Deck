@@ -81,3 +81,7 @@ The offline HTML embeds the MIT-licensed ts-fsrs 6.0.0 implementation, using its
 Self-ratings map Needs review → Again, Partially known → Hard, Well known → Good, Perfect → Easy. Typed reviews with any missed field map to Again; fully correct whole-card reviews map to Easy, and fully correct limited-scope reviews map to Good. The visible category still reflects field-level correctness. Practice drills do not record additional FSRS reviews.
 
 Existing progress is retained. Cards without FSRS data start fresh in the scheduler on their next review, without inventing past review events. Stability, difficulty, and scheduling state persist with progress and backups. Internal FSRS dates are used for its model, not to restrict access or display deadlines. Saved queues retain their order; FSRS ordering applies when starting a new session. Default weights are not automatically optimized for an individual user.
+
+## Independently graded answer parts (1.6.0)
+
+Separate expected answers and your responses with semicolons or line breaks. Blank parts are ignored; commas remain within a part. Responses may be reordered, with one response matching at most one expected part. Colon labels must match (for example, `Long head: scapula`). Each field shows its correct-part count and individual overrides. Mastery scores count correct parts across the card, while FSRS remains card-based and treats any missed part as Again. Existing semicolons now delimit parts; edit punctuation where needed. Part grades and overrides survive pause/resume and backups.
