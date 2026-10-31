@@ -73,3 +73,11 @@ Session snapshots use a small separate IndexedDB database plus a localStorage fa
 ## Preview cards from the deck overview
 
 Click or tap a card row, photo, or name to view its photo, answers, note, source, and review status without starting a session or changing progress. Card names are keyboard-accessible buttons. Close the preview to return to the deck, or choose Edit card.
+
+## FSRS (version 1.5.0)
+
+The offline HTML embeds the MIT-licensed ts-fsrs 6.0.0 implementation, using its default FSRS model and weights, 90% target retention, and disabled interval fuzz. FSRS predicts retrievability to order studied cards; all cards remain available and whole-deck sessions have no cap. New cards remain interleaved. The optional weak-card filter and bounded in-session retries are app features around FSRS.
+
+Self-ratings map Needs review → Again, Partially known → Hard, Well known → Good, Perfect → Easy. Typed reviews with any missed field map to Again; fully correct whole-card reviews map to Easy, and fully correct limited-scope reviews map to Good. The visible category still reflects field-level correctness. Practice drills do not record additional FSRS reviews.
+
+Existing progress is retained. Cards without FSRS data start fresh in the scheduler on their next review, without inventing past review events. Stability, difficulty, and scheduling state persist with progress and backups. Internal FSRS dates are used for its model, not to restrict access or display deadlines. Saved queues retain their order; FSRS ordering applies when starting a new session. Default weights are not automatically optimized for an individual user.

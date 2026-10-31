@@ -183,3 +183,17 @@ test('cleared bookmark wins over older saved sessions and imports remap card IDs
  assert.ok(run('restored.session.queue[0]===imported.cards[0].id'));
  assert.equal(run('restored.session.retries[imported.cards[0].id]'),1);
 });
+
+test('FSRS state survives JSON reload, predicts forgetting and never gates the whole deck',()=>{
+ const run=setup();
+ run('recordReview(d,c,fields(4),t)');
+ assert.ok(run('d.progress.x.fsrs.stability>0'));
+ assert.equal(run('d.progress.x.fsrs.reps'),1);
+ assert.ok(run('priority(d,c,t+30*DAY)>priority(d,c,t+DAY)'));
+ run('d.progress=JSON.parse(JSON.stringify(d.progress));recordReview(d,c,fields(0),t+DAY)');
+ assert.equal(run('d.progress.x.fsrs.reps'),2);
+ assert.equal(run("smartPool(d,'learn',t+DAY).length"),1);
+ assert.ok(run('Number.isFinite(d.progress.x.fsrs.stability)'));
+ run("globalThis.crypto={randomUUID:()=>String(Math.random())};const copy=importDeckObject({cards:[c],progress:d.progress})[0]");
+ assert.equal(run('Object.values(copy.progress)[0].fsrs.reps'),2);
+});
