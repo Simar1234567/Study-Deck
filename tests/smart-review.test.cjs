@@ -210,3 +210,14 @@ test('answer parts support reorder, partial credit, labels, overrides and resume
  run("partial.parts[1].correct=true;partial.correct=true;d.labels={name:'Name'};const restored=restoreFeedback(JSON.parse(JSON.stringify({fields:[partial]})),c,d,'all')");
  assert.equal(run('restored.fields[0].parts[1].correct'),true);
 });
+test('accepted wording is card-specific, invalidated by edits, undoable and portable',()=>{
+ const run=setup();
+ run("const field={key:'origin',expected:'Original answer',entered:'Alternative wording'};rememberFieldAnswer(c,field,true)");
+ assert.ok(run("remembersAnswer(c,'origin','Original answer','Alternative wording')"));
+ assert.equal(run("remembersAnswer(c,'origin','Edited answer','Alternative wording')"),false);
+ assert.equal(run("remembersAnswer({},'origin','Original answer','Alternative wording')"),false);
+ run("globalThis.crypto={randomUUID:()=>String(Math.random())};const copy=importedCard(c)");
+ assert.ok(run("remembersAnswer(copy,'origin','Original answer','Alternative wording')"));
+ run('rememberFieldAnswer(c,field,false)');
+ assert.equal(run("remembersAnswer(c,'origin','Original answer','Alternative wording')"),false);
+});

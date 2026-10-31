@@ -85,3 +85,7 @@ Existing progress is retained. Cards without FSRS data start fresh in the schedu
 ## Independently graded answer parts (1.6.0)
 
 Separate expected answers and your responses with semicolons or line breaks. Blank parts are ignored; commas remain within a part. Responses may be reordered, with one response matching at most one expected part. Colon labels must match (for example, `Long head: scapula`). Each field shows its correct-part count and individual overrides. Mastery scores count correct parts across the card, while FSRS remains card-based and treats any missed part as Again. Existing semicolons now delimit parts; edit punctuation where needed. Part grades and overrides survive pause/resume and backups.
+
+### Remember accepted wording (1.6.1)
+
+**Accept this field** saves the entire nonblank response as an alternative for that card and field. Future matching responses receive full field credit. Alternatives are tied to the exact expected answer, so editing that answer invalidates them. **Mark incorrect** removes the matching alternative. Alternatives persist with the deck and backups; they do not synchronize between devices. Individual part overrides remain one-time corrections.
