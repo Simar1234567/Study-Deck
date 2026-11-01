@@ -93,3 +93,7 @@ Separate expected answers and your responses with semicolons or line breaks. Bla
 ### Card editing access (1.7.0)
 
 Every study card has a three-dot menu in its top-right header, before and after revealing answers, including imported decks and practice/flip modes. It provides Edit card and Edit deck. Opening the card editor preserves typed drafts; saving deck settings returns to the study session. Deck overview rows and previews retain their Edit controls.
+
+### Remember rejected wording (1.7.1)
+
+Mark incorrect saves a rejection scoped to the card, field, expected answer and entered wording. Rejections override automatic matching and remove a conflicting accepted alternative. Accepting again reverses the rejection. Individual part corrections remember the response matched to that part; unmatched blank parts do not invent a response to remember. Answer-bank data persists with the deck and JSON backups. Changed expected answers do not inherit old rejection rules.

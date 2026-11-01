@@ -221,3 +221,15 @@ test('accepted wording is card-specific, invalidated by edits, undoable and port
  run('rememberFieldAnswer(c,field,false)');
  assert.equal(run("remembersAnswer(c,'origin','Original answer','Alternative wording')"),false);
 });
+test('rejected wording overrides matching, survives import, and can be accepted again',()=>{
+ const run=setup();
+ run("d.id='deck';decks=[d];activeDeckId=d.id;session={queue:[c.id]};const f=gradeField('name','Name','Example','Example');rememberFieldAnswer(c,f,false)");
+ assert.equal(run("gradeField('name','Name','Example','Example').correct"),false);
+ run("globalThis.crypto={randomUUID:()=>String(Math.random())};const copy=importedCard(JSON.parse(JSON.stringify(c)))");
+ assert.ok(run("remembersAnswer(copy,'name','Example','Example','rejectedAnswers')"));
+ run('rememberFieldAnswer(c,f,true)');
+ assert.equal(run("gradeField('name','Name','Example','Example').correct"),true);
+ run("rememberFieldAnswer(c,{key:'origin',expected:'One',entered:'One'},false)");
+ assert.equal(run("gradeField('origin','Origin','One; Two','Two; One').parts.filter(p=>p.correct).length"),1);
+ assert.equal(run("gradeField('action','Action','One','One').correct"),true);
+});
