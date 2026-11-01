@@ -89,3 +89,7 @@ Separate expected answers and your responses with semicolons or line breaks. Bla
 ### Remember accepted wording (1.6.1)
 
 **Accept this field** saves the entire nonblank response as an alternative for that card and field. Future matching responses receive full field credit. Alternatives are tied to the exact expected answer, so editing that answer invalidates them. **Mark incorrect** removes the matching alternative. Alternatives persist with the deck and backups; they do not synchronize between devices. Individual part overrides remain one-time corrections.
+
+### Card editing access (1.7.0)
+
+Every study card has a three-dot menu in its top-right header, before and after revealing answers, including imported decks and practice/flip modes. It provides Edit card and Edit deck. Opening the card editor preserves typed drafts; saving deck settings returns to the study session. Deck overview rows and previews retain their Edit controls.
