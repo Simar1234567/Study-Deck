@@ -233,3 +233,17 @@ test('rejected wording overrides matching, survives import, and can be accepted 
  assert.equal(run("gradeField('origin','Origin','One; Two','Two; One').parts.filter(p=>p.correct).length"),1);
  assert.equal(run("gradeField('action','Action','One','One').correct"),true);
 });
+test('smart shuffle respects recall bands, current card and pinned retries',()=>{
+ const run=setup();
+ run("const deck={cards:['a','b','c','d','e'].map(id=>({id})),progress:Object.fromEntries(['a','b','c','d','e'].map(id=>[id,{state:'perfect'}]))};priority=(d,c)=>({a:.1,b:.1,c:.9,d:.8,e:.2}[c.id]);const shuffled=smartShuffleQueue(['a','b','c','d','e'],deck,{d:0})");
+ assert.equal(run('shuffled[0]'),'a');assert.equal(run('shuffled[1]'),'c');assert.equal(run('shuffled[3]'),'d');
+ assert.equal(run('shuffled.slice().sort().join()'),'a,b,c,d,e');
+});
+test('perfect spot checks are sparse, unique and separated from first exposure',()=>{
+ const run=setup();
+ run("const deck={cards:Array.from({length:48},(_,i)=>({id:String(i)})),progress:{}};deck.cards.forEach(c=>deck.progress[c.id]={state:'perfect'});const checks=perfectSpotChecks(deck,deck.cards)");
+ assert.equal(run('checks.length'),3);assert.equal(run('new Set(checks).size'),3);
+ assert.ok(run('checks.every(id=>deck.cards.findIndex(c=>c.id===id)<=39)'));
+ assert.equal(run('perfectSpotChecks(deck,deck.cards.slice(0,9)).length'),0);
+ assert.equal(run("smartPool(deck,'learn').length"),48);
+});

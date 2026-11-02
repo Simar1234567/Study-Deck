@@ -22,7 +22,9 @@ Run `node --test tests/smart-review.test.cjs` for deterministic scheduling tests
 
 ## Shuffle
 
-Use **Shuffle remaining** during typed or flip practice to randomize upcoming cards. The current card, unsaved answers, grades, and saved schedules stay intact. The button becomes available when at least two cards remain after the current card. Shuffling replaces the current queue priority order; starting a new Smart review session restores automatic prioritization.
+Use **Smart shuffle** to mix upcoming cards within 10-percentage-point FSRS forgetting-risk bands. Higher-risk bands come first; new-card slots remain interleaved. The current card, typed answer, and slots reserved for repeats remain unchanged. Resuming restores the resulting order.
+
+Every whole-deck session includes all Perfect cards once. Starting a session additionally samples already-Perfect cards for spot checks: at most one extra per ten deck cards, capped at three per session, with each sampled card repeated once after at least eight intervening cards. Decks under ten cards and Weak cards only sessions receive no extra Perfect checks. These app-level practice checks are recorded as real reviews; they are not FSRS due-date requirements. Existing paused queues are preserved; start a new session to get the spot checks.
 
 ## Updates from inside the app
 
