@@ -99,3 +99,17 @@ Every study card has a three-dot menu in its top-right header, before and after 
 ### Remember rejected wording (1.7.1)
 
 Mark incorrect saves a rejection scoped to the card, field, expected answer and entered wording. Rejections override automatic matching and remove a conflicting accepted alternative. Accepting again reverses the rejection. Individual part corrections remember the response matched to that part; unmatched blank parts do not invent a response to remember. Answer-bank data persists with the deck and JSON backups. Changed expected answers do not inherit old rejection rules.
+
+## Install the iPad progressive web app (1.9.0)
+
+The iPad `index.html` is now a PWA. Both branches contain its manifest, icons, and generated service worker. The desktop HTML remains usable as a standalone offline file.
+
+1. In GitHub, open this repository → **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, then **ipad-compatible**, **/(root)**, and Save.
+2. Once GitHub reports the deployment ready, open `https://simar1234567.github.io/Study-Deck/` in iPad Safari.
+3. Before migrating, use **Back up all decks** in your current copy. The installed app can have separate browser storage; your existing local HTML progress is not automatically transferred.
+4. In Safari, tap **Share → Add to Home Screen** (enable **Open as Web App** if offered), then launch Study Deck from its icon and import your backup.
+5. Open it online once so offline installation completes. Afterwards, it can load cached cards and saved study progress without internet. iPadOS may evict website data; keep backups.
+
+The hosted iPad edition's **Check for updates** checks the service worker and asks before applying a waiting release. It saves the current study bookmark before reloading and never clears the deck databases. Save or cancel on-card edits first. A new release may also take over when all old app windows close. The downloaded `file://` edition still uses the existing HTML download updater; PWA installation requires HTTPS hosting, not a raw GitHub URL or local file.
+
+Release generation updates `sw.js` with the app version. Cache cleanup only removes old app-shell caches, not IndexedDB or localStorage. Publish index.html, sw.js, manifest.webmanifest and icons together. A first visit requires internet; failed installations do not replace an existing offline cache. Local verification covered Chromium offline reload and saved-session recovery, not installation on a physical iPad. GitHub Pages configuration could not be checked from the development environment because its network access to the Pages/API endpoints was blocked.

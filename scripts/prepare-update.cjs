@@ -13,6 +13,8 @@ if(!version||html.match(/const APP_VERSION='([^']+)'/)?.[1]!==version)throw Erro
 const css=fs.readFileSync(path.join(root,'styles/ipad.css'),'utf8');
 const ipad=html.replace('width=device-width,initial-scale=1','width=device-width,initial-scale=1,viewport-fit=cover')
  .replace('</style>',css+'\n</style>')
+ .replace('</head>', '<link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#6e4aae"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Study Deck"><link rel="apple-touch-icon" href="./icons/icon-180.png"></head>')
+ .replace('</body>', '<script>'+fs.readFileSync(path.join(root,'scripts/pwa-client.js'),'utf8')+'</script></body>')
  .replace('name="study-deck-edition" content="desktop"','name="study-deck-edition" content="ipad"')
  .replace("const APP_EDITION='desktop';","const APP_EDITION='ipad';")
  .replace("const UPDATE_BASE='https://raw.githubusercontent.com/Simar1234567/Study-Deck/main/';","const UPDATE_BASE='https://raw.githubusercontent.com/Simar1234567/Study-Deck/ipad-compatible/';")
@@ -20,5 +22,6 @@ const ipad=html.replace('width=device-width,initial-scale=1','width=device-width
  .replace("const UPDATE_MANIFEST='update-manifest.json';","const UPDATE_MANIFEST='ipad-update-manifest.json';");
 function emit(filename,contents){const target=path.join(root,filename);if(arg==='--check'){if(!fs.existsSync(target)||fs.readFileSync(target,'utf8')!==contents)throw Error(filename+' is stale. Run node scripts/prepare-update.cjs');}else fs.writeFileSync(target,contents)}
 function manifest(contents){const bytes=Buffer.from(contents,'utf8');return JSON.stringify({version,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),bytes:bytes.length},null,2)+'\n'}
+emit('sw.js',fs.readFileSync(path.join(root,'scripts/sw-template.js'),'utf8').replace('__VERSION__',version));
 emit('index.html',ipad);emit('update-manifest.json',manifest(html));emit('ipad-update-manifest.json',manifest(ipad));
 console.log(arg==='--check'?'Both editions and update manifests match the shared source.':'Prepared desktop and iPad release '+version);
