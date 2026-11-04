@@ -273,3 +273,14 @@ test('pending demotion matches saved grade and practice clearly keeps saved stat
  assert.equal(run('pendingCategory(d,c)'),'needs_review');
  assert.equal(run('recordReview(d,c,feedback.fields,t+1000).state'),'needs_review');
 });
+test('Perfect retests prioritize oldest last review and rotate after each graded attempt',()=>{
+ const run=setup();
+ run("d.cards=['recent','oldest','middle',...Array.from({length:12},(_,i)=>'w'+i)].map(id=>({id}));d.cards.forEach(c=>d.progress[c.id]={state:c.id.startsWith('w')?'needs_review':'perfect',last:({recent:t+2000,oldest:t,middle:t+1000}[c.id]||t)});session={queue:d.cards.map(c=>c.id),history:[],retries:{},completed:0};ensurePerfectRetests(d)");
+ assert.equal(run('session.queue[4]'),'oldest');
+ run("session.queue.splice(session.queue.indexOf('oldest'),1);session.history.push('oldest');session.completed=5;d.progress.oldest.last=t+3000;ensurePerfectRetests(d)");
+ assert.equal(run('session.queue[4]'),'middle');
+ run("const current=session.queue[0],counts=JSON.stringify(session.perfectTargets);ensurePerfectRetests(d,true)");
+ assert.ok(run('session.queue[0]===current&&JSON.stringify(session.perfectTargets)===counts'));
+ run("d.progress.middle.last=t+3000;session.history.push('middle');ensurePerfectRetests(d)");
+ assert.equal(run("session.queue.filter(id=>stateOf(d,id)==='perfect')[0]"),'recent');
+});

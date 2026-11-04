@@ -145,3 +145,7 @@ The bottom-left hover area is larger. With no saved session history it reveals a
 This replaces the earlier sampled spot checks. Every card already Perfect at whole-deck session start gets its initial appearance plus two additional reviews. Cards newly reaching Perfect get two future reviews. Session targets are fixed once established, saved with pause/resume and remapped in backups. Old unfinished sessions acquire missing quotas on resume while retaining the current card. Practice-only drills do not satisfy or create quotas. Weak cards only retains its selected scope.
 
 Perfect cards are scheduled at every fifth position while non-Perfect cards remain. When only Perfect cards remain, finish their outstanding reviews without filler cards. Missed retests update grading and FSRS normally and can trigger bounded mistake retries. The expanded queue includes outstanding retests, so its count may exceed the deck size.
+
+### Oldest-first Perfect retests (1.13.1)
+
+Perfect-card slots now prioritize the longest time since the last saved graded review (ascending progress.last), recalculated after each review. Session history breaks equal-time ties; missing historical timestamps are treated as oldest. The current card stays in place on resume or Smart Shuffle. Two-retest targets and the every-fifth-slot cadence remain unchanged. Merely viewing a card or doing an ungraded practice drill does not reset its review timestamp. FSRS still handles memory updates and non-Perfect review priority.
