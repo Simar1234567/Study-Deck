@@ -134,3 +134,7 @@ After checking typed answers, the card badge previews its resulting mastery cate
 ### Corner navigation (1.12.2)
 
 The previous-card arrow now overlays the bottom-left corner inside the card, with no footer box. On mouse devices it appears when hovering over that corner or focusing the button with the keyboard, and disappears on leaving. Touch devices keep a subtle visible 44px tap target. The arrow is hidden when there is no previous card. Navigation behavior and saved history are unchanged.
+
+### Arrow availability and update checks (1.12.3)
+
+The bottom-left hover area is larger. With no saved session history it reveals a dim arrow explaining that you must save a result and advance first; touch screens also show this disabled state. The downloaded-file update window now performs a fresh check when opened and shows both running and reported versions instead of reusing an earlier status message.
