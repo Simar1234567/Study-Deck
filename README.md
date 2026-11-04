@@ -117,3 +117,7 @@ Release generation updates `sw.js` with the app version. Cache cleanup only remo
 ## Previous card (1.10.0)
 
 The small bottom-left arrow on the study card is available on both question and answer sides. It opens previously completed cards in a review-only viewer, with reveal/hide and earlier/later controls. Return to current card preserves your draft and feedback. Browsing does not regrade cards, add FSRS reviews, or change the study queue. Session history is saved with unfinished-session bookmarks and remapped on backup import. Existing sessions start accumulating history after this update; the first card has no previous card. Completed-session history remains viewable until leaving the completion screen.
+
+## Photo framing (1.11.0)
+
+In the study card menu, choose Edit card. The Zoom / crop controls offer 1×–4× zoom plus horizontal and vertical position, with a live preview and Reset photo view. Save card commits the framing; Cancel discards it. This is a nondestructive viewport crop: the original embedded image stays intact, while study cards and full card previews use the saved transform. Frame dimensions can differ with screen size. At 1× the position sliders have no effect. Backups/imports preserve framing, and replacing the photo resets it.
