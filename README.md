@@ -130,3 +130,7 @@ Whole-deck queues mix one Perfect card after up to four other cards while both g
 ## Visible pending grades (1.12.1)
 
 After checking typed answers, the card badge previews its resulting mastery category and says Pending save. A Perfect card with an incorrect part explicitly shows that it will leave Perfect. Manual overrides update that preview. Save result · Next card commits the grade; until then, deck totals reflect saved grades. Practice-only drills explicitly display the saved category and do not commit another review. Preview and saved grading share the same category calculation.
+
+### Corner navigation (1.12.2)
+
+The previous-card arrow now overlays the bottom-left corner inside the card, with no footer box. On mouse devices it appears when hovering over that corner or focusing the button with the keyboard, and disappears on leaving. Touch devices keep a subtle visible 44px tap target. The arrow is hidden when there is no previous card. Navigation behavior and saved history are unchanged.

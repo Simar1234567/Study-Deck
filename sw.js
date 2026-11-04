@@ -1,4 +1,4 @@
-const CACHE='study-deck-pwa-1.12.1';
+const CACHE='study-deck-pwa-1.12.2';
 const SHELL=['./index.html','./manifest.webmanifest','./icons/icon-180.png','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{const cache=await caches.open(CACHE);await cache.addAll(SHELL.map(url=>new Request(url,{cache:'reload'})))})()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('study-deck-pwa-')&&key!==CACHE)await caches.delete(key);await self.clients.claim()})()));
