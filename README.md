@@ -138,3 +138,10 @@ The previous-card arrow now overlays the bottom-left corner inside the card, wit
 ### Arrow availability and update checks (1.12.3)
 
 The bottom-left hover area is larger. With no saved session history it reveals a dim arrow explaining that you must save a result and advance first; touch screens also show this disabled state. The downloaded-file update window now performs a fresh check when opened and shows both running and reported versions instead of reusing an earlier status message.
+
+
+## Required Perfect retests (1.13.0)
+
+This replaces the earlier sampled spot checks. Every card already Perfect at whole-deck session start gets its initial appearance plus two additional reviews. Cards newly reaching Perfect get two future reviews. Session targets are fixed once established, saved with pause/resume and remapped in backups. Old unfinished sessions acquire missing quotas on resume while retaining the current card. Practice-only drills do not satisfy or create quotas. Weak cards only retains its selected scope.
+
+Perfect cards are scheduled at every fifth position while non-Perfect cards remain. When only Perfect cards remain, finish their outstanding reviews without filler cards. Missed retests update grading and FSRS normally and can trigger bounded mistake retries. The expanded queue includes outstanding retests, so its count may exceed the deck size.

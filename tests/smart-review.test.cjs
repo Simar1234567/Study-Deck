@@ -239,13 +239,17 @@ test('smart shuffle respects recall bands, current card and pinned retries',()=>
  assert.equal(run('shuffled[0]'),'a');assert.equal(run('shuffled[1]'),'c');assert.equal(run('shuffled[3]'),'d');
  assert.equal(run('shuffled.slice().sort().join()'),'a,b,c,d,e');
 });
-test('perfect spot checks are sparse, unique and separated from first exposure',()=>{
+test('every Perfect card gets two extra reviews, with finite targets and persistent quotas',()=>{
  const run=setup();
- run("const deck={cards:Array.from({length:48},(_,i)=>({id:String(i)})),progress:{}};deck.cards.forEach(c=>deck.progress[c.id]={state:'perfect'});const checks=perfectSpotChecks(deck,deck.cards)");
- assert.equal(run('checks.length'),6);assert.equal(run('new Set(checks).size'),6);
- assert.ok(run('checks.every(id=>deck.cards.findIndex(c=>c.id===id)<=39)'));
- assert.equal(run('perfectSpotChecks(deck,deck.cards.slice(0,9)).length'),0);
- assert.equal(run("smartPool(deck,'learn').length"),48);
+ run("d.cards=Array.from({length:20},(_,i)=>({id:String(i)}));d.cards.forEach((c,i)=>d.progress[c.id]={state:i<4?'perfect':'needs_review'});session={queue:d.cards.map(c=>c.id),history:[],retries:{},completed:0};ensurePerfectRetests(d)");
+ assert.equal(run('session.queue.length'),28);
+ assert.ok(run("['0','1','2','3'].every(id=>session.queue.filter(x=>x===id).length===3)"));
+ assert.equal(run("stateOf(d,session.queue[4])"),'perfect');
+ run("const length=session.queue.length;ensurePerfectRetests(d)");assert.ok(run('session.queue.length===length'));
+ run("while(session.queue.length){const id=session.queue.shift();session.history.push(id);session.completed++;ensurePerfectRetests(d)}");
+ assert.equal(run('session.history.length'),28);
+ run("d.progress['4'].state='perfect';ensurePerfectRetests(d)");
+ assert.equal(run("session.queue.filter(id=>id==='4').length"),2);
 });
 test('whole-deck queues regularly interleave Perfect cards without losing any cards',()=>{
  const run=setup();
