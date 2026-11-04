@@ -24,7 +24,7 @@ Run `node --test tests/smart-review.test.cjs` for deterministic scheduling tests
 
 Use **Smart shuffle** to mix upcoming cards within 10-percentage-point FSRS forgetting-risk bands. Higher-risk bands come first; new-card slots remain interleaved. The current card, typed answer, and slots reserved for repeats remain unchanged. Resuming restores the resulting order.
 
-Every whole-deck session includes all Perfect cards once. Starting a session additionally samples already-Perfect cards for spot checks: at most one extra per ten deck cards, capped at three per session, with each sampled card repeated once after at least eight intervening cards. Decks under ten cards and Weak cards only sessions receive no extra Perfect checks. These app-level practice checks are recorded as real reviews; they are not FSRS due-date requirements. Existing paused queues are preserved; start a new session to get the spot checks.
+Every whole-deck session includes all Perfect cards once. Starting a session additionally samples already-Perfect cards for spot checks: at most one extra per five deck cards, capped at six per session, with each sampled card repeated once after at least eight intervening cards. Decks under ten cards and Weak cards only sessions receive no extra Perfect checks. These app-level practice checks are recorded as real reviews; they are not FSRS due-date requirements. Existing paused queues are preserved; start a new session to get the spot checks.
 
 ## Updates from inside the app
 
@@ -121,3 +121,8 @@ The small bottom-left arrow on the study card is available on both question and 
 ## Photo framing (1.11.0)
 
 In the study card menu, choose Edit card. The Zoom / crop controls offer 1×–4× zoom plus horizontal and vertical position, with a live preview and Reset photo view. Save card commits the framing; Cancel discards it. This is a nondestructive viewport crop: the original embedded image stays intact, while study cards and full card previews use the saved transform. Frame dimensions can differ with screen size. At 1× the position sliders have no effect. Backups/imports preserve framing, and replacing the photo resets it.
+
+
+## More frequent Perfect cards (1.12.0)
+
+Whole-deck queues mix one Perfect card after up to four other cards while both groups remain. FSRS priority is retained within each group. Smart Shuffle also mixes Perfect cards into the movable review slots while preserving current-card and retry slots; new-card slots can affect the exact cadence. Use Smart Shuffle to remix an existing saved queue, or start a new whole-deck session to receive the increased spot-check sample. Weak cards only intentionally excludes Perfect cards.

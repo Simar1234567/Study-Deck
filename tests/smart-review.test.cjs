@@ -242,8 +242,18 @@ test('smart shuffle respects recall bands, current card and pinned retries',()=>
 test('perfect spot checks are sparse, unique and separated from first exposure',()=>{
  const run=setup();
  run("const deck={cards:Array.from({length:48},(_,i)=>({id:String(i)})),progress:{}};deck.cards.forEach(c=>deck.progress[c.id]={state:'perfect'});const checks=perfectSpotChecks(deck,deck.cards)");
- assert.equal(run('checks.length'),3);assert.equal(run('new Set(checks).size'),3);
+ assert.equal(run('checks.length'),6);assert.equal(run('new Set(checks).size'),6);
  assert.ok(run('checks.every(id=>deck.cards.findIndex(c=>c.id===id)<=39)'));
  assert.equal(run('perfectSpotChecks(deck,deck.cards.slice(0,9)).length'),0);
  assert.equal(run("smartPool(deck,'learn').length"),48);
+});
+test('whole-deck queues regularly interleave Perfect cards without losing any cards',()=>{
+ const run=setup();
+ run("const mixedDeck={cards:Array.from({length:20},(_,i)=>({id:String(i)})),progress:{}};mixedDeck.cards.forEach((c,i)=>mixedDeck.progress[c.id]={state:i<4?'perfect':'needs_review'})");
+ for(const kind of ['learn','all','flip']){
+  run(`const q${kind}=smartPool(mixedDeck,'${kind}')`);
+  assert.equal(run(`q${kind}.length`),20);
+  assert.equal(run(`new Set(q${kind}.map(c=>c.id)).size`),20);
+  assert.ok(run(`[4,9,14,19].every(i=>stateOf(mixedDeck,q${kind}[i].id)==='perfect')`));
+ }
 });
