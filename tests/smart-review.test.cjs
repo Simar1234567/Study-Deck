@@ -257,3 +257,15 @@ test('whole-deck queues regularly interleave Perfect cards without losing any ca
   assert.ok(run(`[4,9,14,19].every(i=>stateOf(mixedDeck,q${kind}[i].id)==='perfect')`));
  }
 });
+test('pending demotion matches saved grade and practice clearly keeps saved status',()=>{
+ const run=setup();
+ run("recordReview(d,c,fields(4),t);session={};feedback={fields:fields(3)}");
+ assert.equal(run('pendingCategory(d,c)'),'well_known');
+ assert.equal(run('resultCategoryLabel(d,c)'),'Well known · Pending save');
+ assert.equal(run('d.progress.x.state'),'perfect');
+ run('session.practice={}');
+ assert.equal(run('resultCategoryLabel(d,c)'),'Practice only · Saved: Perfect');
+ run('delete session.practice;feedback.fields=fields(0)');
+ assert.equal(run('pendingCategory(d,c)'),'needs_review');
+ assert.equal(run('recordReview(d,c,feedback.fields,t+1000).state'),'needs_review');
+});

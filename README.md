@@ -126,3 +126,7 @@ In the study card menu, choose Edit card. The Zoom / crop controls offer 1×–4
 ## More frequent Perfect cards (1.12.0)
 
 Whole-deck queues mix one Perfect card after up to four other cards while both groups remain. FSRS priority is retained within each group. Smart Shuffle also mixes Perfect cards into the movable review slots while preserving current-card and retry slots; new-card slots can affect the exact cadence. Use Smart Shuffle to remix an existing saved queue, or start a new whole-deck session to receive the increased spot-check sample. Weak cards only intentionally excludes Perfect cards.
+
+## Visible pending grades (1.12.1)
+
+After checking typed answers, the card badge previews its resulting mastery category and says Pending save. A Perfect card with an incorrect part explicitly shows that it will leave Perfect. Manual overrides update that preview. Save result · Next card commits the grade; until then, deck totals reflect saved grades. Practice-only drills explicitly display the saved category and do not commit another review. Preview and saved grading share the same category calculation.
