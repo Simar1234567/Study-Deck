@@ -284,3 +284,10 @@ test('Perfect retests prioritize oldest last review and rotate after each graded
  run("d.progress.middle.last=t+3000;session.history.push('middle');ensurePerfectRetests(d)");
  assert.equal(run("session.queue.filter(id=>stateOf(d,id)==='perfect')[0]"),'recent');
 });
+test('groups require a clean round, and the final smaller group completes',()=>{
+ const run=setup();run("session={kind:'streak',queue:['a','b','c','d','e','f','g'],completed:0,correct:0,missed:0};ensureStudyGroup()");
+ run("for(let i=0;i<5;i++)advanceStudyGroup({id:session.queue[0]},i!==2)");assert.equal(run('session.queue.join()'),'a,b,c,d,e,f,g');
+ assert.equal(run('session.group.round'),2);
+ run("for(let i=0;i<5;i++)advanceStudyGroup({id:session.queue[0]},true)");assert.equal(run('session.queue.join()'),'f,g');
+ run("advanceStudyGroup({id:'f'},true);advanceStudyGroup({id:'g'},true)");assert.equal(run('session.queue.length'),0);
+});
