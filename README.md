@@ -149,3 +149,7 @@ Perfect cards are scheduled at every fifth position while non-Perfect cards rema
 ### Oldest-first Perfect retests (1.13.1)
 
 Perfect-card slots now prioritize the longest time since the last saved graded review (ascending progress.last), recalculated after each review. Session history breaks equal-time ties; missing historical timestamps are treated as oldest. The current card stays in place on resume or Smart Shuffle. Two-retest targets and the every-fifth-slot cadence remain unchanged. Merely viewing a card or doing an ungraded practice drill does not reset its review timestamp. FSRS still handles memory updates and non-Perfect review priority.
+
+## 5 in a row (1.14.0)
+
+Open a deck and select **5 in a row**. Each card requires five consecutive fully correct, saved attempts before advancing. Any incorrect part or saved reveal resets the streak. The mode tests all fields; manual grading corrections still apply. Pause/resume preserves the streak, pending feedback and draft. Practice-only drills do not count toward it. Each saved attempt updates normal grading and FSRS; this is an intensive repetition drill, not evidence of long-term retention. The usual extra Perfect retest quota is disabled in this separate mode.
